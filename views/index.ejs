@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/index.css">
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+  <script defer src="/socket.io/socket.io.js"></script>
+  <script defer src="/public/js/index.js"></script>
+  <title>Socket IO</title>
+</head>
+<body>
+  <h1>SocketIO Chat App</h1>
+
+  <div id="nicknameWrapper">
+    <form action="" id="nicknameForm" autocomplete="off">
+      <input id="nicknameInput" type="text" required placeholder="Nickname">
+      <button>Nickname</button>
+    </form>
+  </div>
+
+  <div id="roomWrapper">
+    <form action="" id="roomForm"  autocomplete="off">
+      <input id="roomInput" type="text" required placeholder="Room Name">
+      <button>Enter Room</button>
+    </form>
+  </div>
+
+  <ul></ul>
+  
+  <div id="messageWrapper">
+    <form action="" id="messageForm"  autocomplete="off">
+    <input id="messageInput" type="text" required placeholder="Write a Message">
+    <button>Send Message</button>
+  </form>
+  </div>
+
+</body>
+</html>
