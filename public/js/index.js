@@ -11,13 +11,17 @@ const messageForm = document.querySelector('#messageForm');
 const messageInput = document.querySelector('#messageInput');
 const messageUL = document.querySelector('#messageUL');
 const roomsUL = document.querySelector('#roomsUL');
+const welcomeText = document.createElement('p');
+const membersWrapper = document.querySelector('#membersWrapper');
+const membersText = document.querySelector('#membersText');
 
-let room = '';
+let currentRoom = '';
 let nickname = '';
 
 const init = () => {
   messageWrapper.hidden = true;
   roomWrapper.hidden = true;
+  membersWrapper.hidden = true;
   roomInput.focus();
 };
 
@@ -25,7 +29,6 @@ init();
 
 /* ====== Toggle Form ======= */
 const showRoomForm = (newNickname) => {
-  console.log(newNickname);
   nickname = newNickname;
   nicknameWrapper.hidden = true;
   roomWrapper.hidden = false;
@@ -40,17 +43,17 @@ const showMessageForm = () => {
   nicknameWrapper.hidden = true;
   roomWrapper.hidden = true;
   messageWrapper.hidden = false;
+  membersWrapper.hidden = false;
   h2.hidden = true;
   messageInput.focus();
-  const p = document.createElement('p');
-  p.innerHTML = `👋 ${nickname} in Room ${room} `;
-  document.body.insertBefore(p, messageUL);
+  welcomeText.innerHTML = `👋 ${nickname} in Room ${currentRoom} `;
+  document.body.insertBefore(welcomeText, messageUL);
 };
 
 /* ====== SOCKET EVENT ======= */
 
 const addMessage = (message) => {
-  console.log(message);
+  console.log(`new message`, message);
   const li = document.createElement('li');
   li.innerText = message;
   messageUL.append(li);
@@ -70,11 +73,18 @@ socket.on('newRoom', (rooms) => {
   const roomsLength = document.querySelector('#roomsLength');
   roomsLength.innerHTML = rooms.length;
   roomsUL.innerHTML = '';
+  const roomMembers = [];
   rooms.forEach((room) => {
     const li = document.createElement('li');
-    li.innerHTML = `${room.room} : ${room.membersNickname.length} users`;
+    li.innerHTML = `${room.room} ➡ ${room.membersNickname.length} users`;
     roomsUL.append(li);
+    if (room.room === currentRoom) {
+      room.membersNickname.forEach((member) => {
+        roomMembers.push(member.nickname);
+      });
+    }
   });
+  membersText.innerHTML = roomMembers.toString();
 });
 
 socket.on('newMessage', (message) => {
@@ -96,17 +106,16 @@ const handleRoom = (e) => {
     { roomname: roomInput.value, nickname },
     showMessageForm
   );
-  room = roomInput.value;
+  currentRoom = roomInput.value;
   roomInput.value = '';
 };
 
 const handleMessage = (e) => {
   e.preventDefault();
   const message = messageInput.value;
-  console.log(`roomname`, room);
   socket.emit(
     'newMessage',
-    { roomname: room, message, nickname },
+    { roomname: currentRoom, message, nickname },
     (message) => {
       addMessage(`me : ${message}`);
     }

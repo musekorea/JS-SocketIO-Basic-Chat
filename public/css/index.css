@@ -29,11 +29,23 @@ p{
   position: fixed;
   text-align: center;
   right: 0px;
-  width : 150px;
+  width : 200px;
   background-color:darkgray;
   border-radius: 10px;
 }
 #roomsUL{
   text-align: left;
   color:white
+}
+#membersWrapper{
+  position: fixed;
+  text-align: center;
+  left:0px;
+  width: 200px;
+  border-radius: 10px;
+  background-color: darkseagreen;
+}
+#membersText{
+  color:white;
+  font-size: 16px;
 }

@@ -1,5 +1,6 @@
 import express from 'express';
 import http from 'http';
+import { disconnect } from 'process';
 import { Server } from 'socket.io';
 
 const app = express();
@@ -41,7 +42,6 @@ const findPublicRooms = () => {
       });
     });
     publicRooms.push({ room, membersNickname });
-    console.log(publicRooms);
   });
   return publicRooms;
 };
@@ -53,10 +53,17 @@ socketIO.on('connection', (socket) => {
   });
 
   socket.on('disconnecting', (reason) => {
+    console.log(`disconnection reason - `, reason);
     socket.rooms.forEach((room) => {
       socket.to(room).emit('leftRoom', `${socket.nickname} is left`);
     });
-    socketIO.emit('newRoom', findPublicRooms());
+    /* socketIO.emit('newRoom', findPublicRooms()); 이렇게 해줘도 되고  */
+  });
+  socket.on('disconnect', () => {
+    socketIO.emit(
+      'newRoom',
+      findPublicRooms()
+    ); /* 이렇게 disconnect로 완전히 끊어졌을때 해줘도 됨 */
   });
 
   socket.on('nickname', (data, showRoomForm) => {
