@@ -25,3 +25,15 @@ p{
   position: fixed;
   bottom:0
 }
+#roomsWrapper{
+  position: fixed;
+  text-align: center;
+  right: 0px;
+  width : 150px;
+  background-color:darkgray;
+  border-radius: 10px;
+}
+#roomsUL{
+  text-align: left;
+  color:white
+}

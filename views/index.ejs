@@ -5,13 +5,18 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/public/css/index.css">
-  <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css"> 
   <script defer src="/socket.io/socket.io.js"></script>
   <script defer src="/public/js/index.js"></script>
   <title>Socket IO</title>
 </head>
 <body>
-  <h1>SocketIO Chat App</h1>
+  <h2>SocketIO Chat</h2>
+
+  <div id="roomsWrapper">
+    <h5><span id="roomsLength"></span> Rooms</h5>
+    <ul id="roomsUL"></ul>
+  </div>
 
   <div id="nicknameWrapper">
     <form action="" id="nicknameForm" autocomplete="off">
@@ -27,7 +32,8 @@
     </form>
   </div>
 
-  <ul></ul>
+  
+  <ul id="messageUL"></ul>
   
   <div id="messageWrapper">
     <form action="" id="messageForm"  autocomplete="off">
@@ -35,6 +41,9 @@
     <button>Send Message</button>
   </form>
   </div>
+
+ 
+  
 
 </body>
 </html>

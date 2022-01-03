@@ -1,5 +1,5 @@
 const socket = io();
-const h1 = document.querySelector('h1');
+const h2 = document.querySelector('h2');
 const nicknameWrapper = document.querySelector('#nicknameWrapper');
 const nicknameForm = document.querySelector('#nicknameForm');
 const nicknameinput = document.querySelector('#nicknameInput');
@@ -9,7 +9,8 @@ const roomInput = document.querySelector('#roomInput');
 const messageWrapper = document.querySelector('#messageWrapper');
 const messageForm = document.querySelector('#messageForm');
 const messageInput = document.querySelector('#messageInput');
-const ul = document.querySelector('ul');
+const messageUL = document.querySelector('#messageUL');
+const roomsUL = document.querySelector('#roomsUL');
 
 let room = '';
 let nickname = '';
@@ -39,11 +40,11 @@ const showMessageForm = () => {
   nicknameWrapper.hidden = true;
   roomWrapper.hidden = true;
   messageWrapper.hidden = false;
-  h1.hidden = true;
+  h2.hidden = true;
   messageInput.focus();
   const p = document.createElement('p');
   p.innerHTML = `👋 ${nickname} in Room ${room} `;
-  document.body.insertBefore(p, ul);
+  document.body.insertBefore(p, messageUL);
 };
 
 /* ====== SOCKET EVENT ======= */
@@ -52,7 +53,7 @@ const addMessage = (message) => {
   console.log(message);
   const li = document.createElement('li');
   li.innerText = message;
-  ul.append(li);
+  messageUL.append(li);
 };
 
 socket.on('welcomeRoom', (message) => {
@@ -63,6 +64,17 @@ socket.on('welcomeRoom', (message) => {
 socket.on('leftRoom', (message) => {
   console.log('Leaved Room', message);
   addMessage(message);
+});
+
+socket.on('newRoom', (rooms) => {
+  const roomsLength = document.querySelector('#roomsLength');
+  roomsLength.innerHTML = rooms.length;
+  roomsUL.innerHTML = '';
+  rooms.forEach((room) => {
+    const li = document.createElement('li');
+    li.innerHTML = `${room.room} : ${room.membersNickname.length} users`;
+    roomsUL.append(li);
+  });
 });
 
 socket.on('newMessage', (message) => {

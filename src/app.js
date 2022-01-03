@@ -14,30 +14,49 @@ app.get('/', (req, res) => {
   return res.status(200).render('index.ejs');
 });
 
+let publicRooms = [];
+
 const findPublicRooms = () => {
-  const publicRooms = [];
+  publicRooms = []; //초기화
+  const roomsData = [];
   const socketIDs = socketIO.sockets.adapter.sids;
   const rooms = socketIO.sockets.adapter.rooms;
+
   rooms.forEach((value, key) => {
+    //만들어진 Room 추출
     if (!socketIDs.has(key)) {
-      publicRooms.push(key);
+      roomsData.push(key);
     }
+  });
+
+  roomsData.forEach((room) => {
+    const members = rooms.get(room); //id로 된 멤버
+    const membersNickname = [];
+    members.forEach((member) => {
+      //id에서 닉네임 추출
+      socketIO.sockets.sockets.forEach((socket) => {
+        if (member === socket.id) {
+          membersNickname.push({ id: member, nickname: socket.nickname });
+        }
+      });
+    });
+    publicRooms.push({ room, membersNickname });
+    console.log(publicRooms);
   });
   return publicRooms;
 };
 
 socketIO.on('connection', (socket) => {
+  socketIO.emit('newRoom', findPublicRooms());
   socket.onAny((event) => {
     console.log('Socket Event ➡  ' + event);
-    console.log(socketIO.sockets.adapter);
-    const publicRooms = findPublicRooms();
-    console.log(publicRooms);
   });
 
   socket.on('disconnecting', (reason) => {
     socket.rooms.forEach((room) => {
       socket.to(room).emit('leftRoom', `${socket.nickname} is left`);
     });
+    socketIO.emit('newRoom', findPublicRooms());
   });
 
   socket.on('nickname', (data, showRoomForm) => {
@@ -49,6 +68,7 @@ socketIO.on('connection', (socket) => {
     socket.join(data.roomname);
     showMessageForm();
     socket.to(data.roomname).emit('welcomeRoom', `${data.nickname} is joined`);
+    socketIO.emit('newRoom', findPublicRooms());
   });
 
   socket.on('newMessage', (data, done) => {
