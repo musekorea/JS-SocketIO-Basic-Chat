@@ -1,11 +1,19 @@
 import express from 'express';
 import http from 'http';
-import { disconnect } from 'process';
 import { Server } from 'socket.io';
+import { instrument } from '@socket.io/admin-ui';
 
 const app = express();
 const httpServer = http.createServer(app);
-const socketIO = new Server(httpServer);
+const socketIO = new Server(httpServer, {
+  cors: {
+    origin: ['https://admin.socket.io'],
+    credntials: true,
+  },
+});
+instrument(socketIO, {
+  auth: false,
+});
 
 app.use('/public', express.static(__dirname + '/../public'));
 app.set('view engine', 'ejs');
